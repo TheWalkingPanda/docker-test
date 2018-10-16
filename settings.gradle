@@ -1,0 +1,5 @@
+rootProject.name = 'docker-test'
+include 'docker-test-spring-boot-web'
+include 'docker-test-dubbo'
+include 'docker-test-api'
+

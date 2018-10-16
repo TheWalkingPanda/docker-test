@@ -1,0 +1,51 @@
+apply plugin: 'io.spring.dependency-management'
+apply plugin: "org.springframework.boot"
+apply plugin: "com.bmuschko.docker-remote-api"
+
+dependencies {
+    compile "org.springframework.boot:spring-boot-starter-web"
+    compile "org.springframework.boot:spring-boot-starter-log4j2"
+    compile "com.lmax:disruptor:3.3.6"
+}
+
+/**
+ * 将生成的fatjar拷贝至 build/docker 目录，为后续构建镜像做准备
+ */
+task copyDockerJar(type: Copy, dependsOn: build) {
+    group = "docker"
+
+    from jar.archivePath.path
+    into "${project.buildDir}/docker"
+}
+
+task createDockerfile(type: com.bmuschko.gradle.docker.tasks.image.Dockerfile, dependsOn: copyDockerJar) {
+    group = "docker"
+
+    instruction("FROM        centos:7")
+
+    instruction("MAINTAINER  bing <2770078682@qq.com>")
+
+    instruction("RUN         yum install -y wget")
+    instruction("ENV         BING_HOME /home/bing")
+    instruction("RUN         mkdir -p \$BING_HOME/java")
+    instruction("WORKDIR     \$BING_HOME/java")
+    instruction("RUN         wget --no-check-certificate --no-cookie --header 'Cookie:oraclelicense=accept-securebackup-cookie;' http://download.oracle.com/otn-pub/java/jdk/8u181-b13/96a7b8442fe848ef90c96a2fad6ed6d1/jdk-8u181-linux-x64.tar.gz")
+    instruction("RUN         tar -zxvf jdk-8u181-linux-x64.tar.gz && rm -f jdk-8u181-linux-x64.tar.gz")
+    instruction("ENV         JAVA_HOME   \$BING_HOME/java/jdk1.8.0_181")
+    instruction("ENV         PATH        \$JAVA_HOME/bin:\$PATH")
+    instruction("ENV         CLASSPATH   .:\$JAVA_HOME/lib/dt.jar:\$JAVA_HOME/lib/tools.jar")
+
+    instruction("ENV         APP_PATH /home/bing/app")
+    instruction("RUN         mkdir -p \$APP_PATH")
+    instruction("COPY        ${project.name}-${project.version}.jar \$APP_PATH")
+
+    instruction("WORKDIR     \$APP_PATH")
+    instruction("ENV         APP_NAME ${project.name}-${project.version}.jar")
+    instruction("CMD         java -jar -Dproject.name=${project.name} -Dlogging.file.path=logs -Dlogging.console.level=info \$APP_NAME")
+}
+
+task buildImage(type: com.bmuschko.gradle.docker.tasks.image.DockerBuildImage, dependsOn: createDockerfile) {
+    group = "docker"
+    inputDir = project.file("${project.buildDir}/docker")
+    tags = ["bing/${project.name}:${project.version}".toString(), "bing/${project.name}:latest".toString()]
+}

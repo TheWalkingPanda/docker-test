@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Configuration status="warn" strict="true">
+    <Properties>
+        <Property name="layout">%d %p [%X{traceId}] [%t] %c{10}:%M:%L %m%n</Property>
+        <Property name="project.name">${sys:project.name}</Property>
+        <Property name="logging.file.name.info">${sys:logging.file.path}/${project.name}.log</Property>
+        <Property name="logging.file.name.warn">${sys:logging.file.path}/${project.name}-warn.log</Property>
+        <Property name="logging.file.name.error">${sys:logging.file.path}/${project.name}-error.log</Property>
+        <Property name="logging.file.name.monitor">${sys:logging.file.path}/../monitor/${project.name}-monitor.log</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${layout}"/>
+        </Console>
+
+        <!--<RollingRandomAccessFile name="infoFile"
+                                 fileName="${logging.file.name.info}"
+                                 filePattern="${logging.file.name.info}-%d{yyyy-MM-dd-HH}">
+
+            <PatternLayout pattern="${layout}"/>
+            <ThresholdFilter level="info"/>
+
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+
+        </RollingRandomAccessFile>
+
+        <RollingRandomAccessFile name="warnFile"
+                                 fileName="${logging.file.name.warn}"
+                                 filePattern="${logging.file.name.warn}-%d{yyyy-MM-dd-HH}">
+
+            <PatternLayout pattern="${layout}"/>
+            <ThresholdFilter level="warn"/>
+
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+
+        </RollingRandomAccessFile>
+
+        <RollingRandomAccessFile name="errorFile"
+                                 fileName="${logging.file.name.error}"
+                                 filePattern="${logging.file.name.error}-%d{yyyy-MM-dd-HH}">
+
+            <PatternLayout pattern="${layout}"/>
+            <ThresholdFilter level="error"/>
+
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+
+        </RollingRandomAccessFile>-->
+
+    </Appenders>
+    <Loggers>
+        <AsyncRoot level="info" includeLocation="true" >
+            <Appender-ref ref="Console" level="${sys:logging.console.level:-off}"/>
+            <!--<Appender-ref ref="infoFile" />
+            <Appender-ref ref="warnFile" />
+            <Appender-ref ref="errorFile" />-->
+        </AsyncRoot>
+    </Loggers>
+</Configuration>

@@ -1,0 +1,63 @@
+buildscript {
+    ext {
+        springBootVersion = "2.0.5.RELEASE"
+    }
+
+    repositories {
+        mavenLocal()
+        maven {
+            url "https://maven.aliyun.com/repository/central"
+        }
+    }
+
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+
+//        gradle-docker-plugin user guide:https://bmuschko.github.io/gradle-docker-plugin/
+        classpath "com.bmuschko:gradle-docker-plugin:3.2.4"
+    }
+}
+
+allprojects {
+    group "com.bing"
+    version "1.0-SNAPSHOT"
+}
+
+subprojects {
+    apply plugin: "java"
+    tasks.withType(JavaCompile) {
+        options.encoding = "utf-8"
+    }
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    repositories {
+        mavenLocal()
+
+        maven {
+            url "http://maven.aliyun.com/nexus/content/groups/public"
+        }
+    }
+
+    dependencies {
+        compile "org.projectlombok:lombok:1.16.10"
+    }
+
+    configurations.all {
+        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    }
+
+    configurations {
+        all*.exclude module: "spring-boot-starter-logging"
+        all*.exclude module: "slf4j-log4j12"
+        all*.exclude module: "kafka_2.10"
+    }
+
+    task createDirs {
+        doLast {
+            sourceSets*.java.srcDirs*.each { it.mkdirs() }
+            sourceSets*.resources.srcDirs*.each { it.mkdirs()}
+        }
+    }
+}

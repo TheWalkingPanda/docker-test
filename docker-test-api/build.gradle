@@ -1,0 +1,40 @@
+apply plugin: "maven"
+
+javadoc {
+    failOnError = false
+    options {
+        encoding "utf-8"
+        charSet "utf-8"
+    }
+    options.memberLevel = JavadocMemberLevel.PRIVATE
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier "sources"
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar) {
+    classifier "javadoc"
+    from javadoc
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+/*uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: "http://192.168.1.177:8081/nexus/content/repositories/releases") {
+            authentication(userName: "deployment", password: "wodianni")
+        }
+        repository(url: "http://192.168.1.177:8081/nexus/content/repositories/snapshots") {
+            authentication(userName: "deployment", password: "wodianni")
+        }
+    }
+}
+
+dependencies {
+    compile "org.springframework.boot:spring-boot-autoconfigure:1.5.7.RELEASE"
+}*/

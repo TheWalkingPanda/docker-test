@@ -41,7 +41,7 @@ task createDockerfile(type: com.bmuschko.gradle.docker.tasks.image.Dockerfile, d
 
     instruction("WORKDIR     \$APP_PATH")
     instruction("ENV         APP_NAME ${project.name}-${project.version}.jar")
-    instruction("CMD         java -jar -Dproject.name=${project.name} -Dlogging.file.path=logs -Dlogging.console.level=info \$APP_NAME")
+    instruction("ENTRYPOINT  java -jar -Dproject.name=${project.name} -Dlogging.file.path=logs -Dlogging.console.level=info \$APP_NAME")
 }
 
 task buildImage(type: com.bmuschko.gradle.docker.tasks.image.DockerBuildImage, dependsOn: createDockerfile) {

@@ -14,4 +14,4 @@ RUN         mkdir -p $APP_PATH
 COPY        docker-test-spring-boot-web.jar $APP_PATH
 WORKDIR     $APP_PATH
 ENV         APP_NAME docker-test-spring-boot-web.jar
-CMD         java -jar $APP_NAME
+ENTRYPOINT  java -jar $APP_NAME

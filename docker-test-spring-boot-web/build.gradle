@@ -29,9 +29,9 @@ task createDockerfile(type: com.bmuschko.gradle.docker.tasks.image.Dockerfile, d
     instruction("ENV         BING_HOME /home/bing")
     instruction("RUN         mkdir -p \$BING_HOME/java")
     instruction("WORKDIR     \$BING_HOME/java")
-    instruction("RUN         wget --no-check-certificate --no-cookie --header 'Cookie:oraclelicense=accept-securebackup-cookie;' http://download.oracle.com/otn-pub/java/jdk/8u181-b13/96a7b8442fe848ef90c96a2fad6ed6d1/jdk-8u181-linux-x64.tar.gz")
-    instruction("RUN         tar -zxvf jdk-8u181-linux-x64.tar.gz && rm -f jdk-8u181-linux-x64.tar.gz")
-    instruction("ENV         JAVA_HOME   \$BING_HOME/java/jdk1.8.0_181")
+    instruction("RUN         wget --no-check-certificate --no-cookie --header 'Cookie:oraclelicense=accept-securebackup-cookie;' http://download.oracle.com/otn-pub/java/jdk/8u191-b12/2787e4a523244c269598db4e85c51e0c/jdk-8u191-linux-x64.tar.gz")
+    instruction("RUN         tar -zxvf jdk-8u191-linux-x64.tar.gz && rm -f jdk-8u191-linux-x64.tar.gz")
+    instruction("ENV         JAVA_HOME   \$BING_HOME/java/jdk1.8.0_191")
     instruction("ENV         PATH        \$JAVA_HOME/bin:\$PATH")
     instruction("ENV         CLASSPATH   .:\$JAVA_HOME/lib/dt.jar:\$JAVA_HOME/lib/tools.jar")
 
@@ -44,6 +44,8 @@ task createDockerfile(type: com.bmuschko.gradle.docker.tasks.image.Dockerfile, d
     instruction("ENTRYPOINT  java -jar -Dproject.name=${project.name} -Dlogging.file.path=logs -Dlogging.console.level=info \$APP_NAME")
 }
 
+//fixme 构建镜像有问题，暂时使用生成的Dockerfile手动生成镜像
+//todo docker build -t docker-test-spring-boot-web:1.0-SNAPSHOT .
 task buildImage(type: com.bmuschko.gradle.docker.tasks.image.DockerBuildImage, dependsOn: createDockerfile) {
     group = "docker"
     inputDir = project.file("${project.buildDir}/docker")
